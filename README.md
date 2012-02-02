@@ -50,7 +50,7 @@ I assume that our XML path looks like `db/news.xml`.
     foreach($news as $post)
     {
       echo '<h1>'.$post->title.'</h1>';
-      echo '<small>author: '.$post->author.'</small>';
+      echo '<small>'.author: '.$post->author.'</small>';
       echo '<p>'.$post->content.'</p>';
     }
 No need to use `order_by_desc()`
@@ -61,7 +61,7 @@ No need to use `order_by_desc()`
     $news = $db->select();
 
     echo '<h1>'.$news->title.'</h1>';
-    echo '<small>author: '.$news->author.'</small>';
+    echo '<small>'.author: '.$news->author.'</small>';
     echo '<p>'.$news->content.'</p>';
 Type ID of record after file name in `factory()` method.
 Don't use any methods after `select()`
