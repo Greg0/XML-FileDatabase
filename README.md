@@ -5,7 +5,7 @@ PHP Class to use XML file like a FlatFileDatabase
 
 Pozdro:
 
-   Super
+>   Super
 
 XML file database schema
 -------
