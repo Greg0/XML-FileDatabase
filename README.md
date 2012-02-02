@@ -95,7 +95,7 @@ It's very smilar to `Inserting`, you must set ID of row you want to edit in `fac
     $db->content = 'Some content to my inserted news';
 
     $db->save();
-Don;t forget about to call `select()` method
+Don't forget about to call `select()` method
 
 ### Remove
 
