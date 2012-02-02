@@ -72,6 +72,10 @@ You haven't to load all fields from record. Possible to specify names of fields 
 
     select(array('title', 'content'))
 
+##### Chain methods for `select()`
+
+- `order_by_desc()` - sort rows from oldest to newest
+
 ### Insert
 
 It's pretty simple:
