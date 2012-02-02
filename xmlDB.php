@@ -4,6 +4,7 @@
   * PHP Class to use XML file like a FlatFileDatabase
   *
   * @author Grego
+  * @copyright
   */
  class Data {
 
@@ -91,7 +92,7 @@
          $this->_data->{$name} = $value;
          return $this;
      }
-     
+
      /**
       * Getter of file name
       * @return string 
@@ -167,6 +168,29 @@
      }
 
      /**
+      * Returning data for multi select
+      * @return \Data
+      */
+     public function find_all()
+     {
+         return $this->_data;
+     }
+
+     /**
+      * Sort array of objects DESC by ID
+      * @return \Database 
+      */
+     public function order_by_desc()
+     {
+         if (is_array($this->_data))
+         {
+             $this->_data = array_reverse($this->_data, true);
+         }
+
+         return $this;
+     }
+
+     /**
       * Run selecting data. Returning specified data if $fields are specified
       * @param array $fields fields you want to retrive
       * @return \Database|\Data depending on multi/single select
@@ -195,46 +219,61 @@
              }
          }
 
-         $this->_xml_to_object();
+         try {
+             $this->_xml_to_object();
+         }
+         catch (Exception $msg) {
+             throw new Exception('Brak rekordu');
+         }
 
          return (is_numeric($this->_row_id)) ? Data::getInstance() : $this;
      }
 
      /**
-      * Returning data for multi select
-      * @return \Data
+      * Add/Edit rows
+      * @return asXML 
       */
-     public function find_all()
-     {
-         return $this->_data;
-     }
-
-     /**
-      * Sort array of objects DESC by ID
-      * @return \Database 
-      */
-     public function order_by_desc()
-     {
-         if (is_array($this->_data))
-         {
-             $this->_data = array_reverse($this->_data, true);
-         }
-
-         return $this;
-     }
-
      public function save()
      {
          $data = Data::getInstance();
-         $row = $this->xml->addChild('row');
 
-         foreach(get_object_vars($data) as $name => $value)
+         if (is_numeric($this->_row_id))
          {
-             $field = $row->addChild('field', $value);
-             $field->addAttribute('name', $name);
+             $row = $this->xml->row[$this->_row_id];
+             $i = 0;
+             foreach (get_object_vars($data) as $name => $value)
+             {
+                 $row->field[$i] = $value;
+                 $i++;
+             }
          }
-         
+         else
+         {
+             $row = $this->xml->addChild('row');
+             foreach (get_object_vars($data) as $name => $value)
+             {
+                 $field = $row->addChild('field', $value);
+                 $field->addAttribute('name', $name);
+             }
+         }
+
          return $this->xml->asXML($this->file);
+     }
+
+     /**
+      * Delete row
+      * @return string
+      * @throws Exception nie wybrano rekordu
+      */
+     public function delete()
+     {
+         if (isset($this->_row_id))
+         {
+             unset($this->xml->row[$this->_row_id]);
+             return $this->xml->asXML($this->file);
+         }
+
+         throw new Exception('Nie wybrano rekordu do kasacji');
      }
 
  }
