@@ -1,1 +1,16 @@
-Hello World
+Usability:
+
+DB schema:
+`<?xml version="1.0" encoding="UTF-8"?>
+<table name="news">
+    <row>
+        <field name="title">My first news title</field>
+        <field name="author">Grego</field>
+        <field name="content">Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies. Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim. Phasellus fermentum in, dolor. Pellentesque facilisis. Nulla imperdiet sit amet magna. Vestibulum dapibus, mauris nec malesuada fames ac turpis velit, rhoncus eu, luctus et interdum adipiscing wisi. Aliquam erat ac ipsum. Integer aliquam purus. Quisque lorem tortor fringilla sed,</field>
+    </row>
+    <row>
+        <field name="title">My second news</field>
+        <field name="author">Grego</field>
+        <field name="description">Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies.</field>
+    </row>
+</table>`
