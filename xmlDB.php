@@ -3,13 +3,8 @@
  /**
   * PHP Class to use XML file like a FlatFileDatabase
   *
-<<<<<<< HEAD
-  * @author Grego
-  * @copyright 2011 http://greg0.ovh.org
-=======
   * @author Grego http://greg0.ovh.org
   * @copyright 2012 Grzegorz K.
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
   */
  class Data {
 
@@ -97,11 +92,7 @@
          $this->_data->{$name} = $value;
          return $this;
      }
-<<<<<<< HEAD
-     
-=======
 
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
      /**
       * Getter of file name
       * @return string 
@@ -177,8 +168,6 @@
      }
 
      /**
-<<<<<<< HEAD
-=======
       * Returning data for multi select
       * @return \Data
       */
@@ -202,7 +191,6 @@
      }
 
      /**
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
       * Run selecting data. Returning specified data if $fields are specified
       * @param array $fields fields you want to retrive
       * @return \Database|\Data depending on multi/single select
@@ -231,57 +219,17 @@
              }
          }
 
-<<<<<<< HEAD
-         $this->_xml_to_object();
-=======
          try {
              $this->_xml_to_object();
          }
          catch (Exception $msg) {
              throw new Exception('Brak rekordu');
          }
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
 
          return (is_numeric($this->_row_id)) ? Data::getInstance() : $this;
      }
 
      /**
-<<<<<<< HEAD
-      * Returning data for multi select
-      * @return \Data
-      */
-     public function find_all()
-     {
-         return $this->_data;
-     }
-
-     /**
-      * Sort array of objects DESC by ID
-      * @return \Database 
-      */
-     public function order_by_desc()
-     {
-         if (is_array($this->_data))
-         {
-             $this->_data = array_reverse($this->_data, true);
-         }
-
-         return $this;
-     }
-
-     public function save()
-     {
-         $data = Data::getInstance();
-         $row = $this->xml->addChild('row');
-
-         foreach(get_object_vars($data) as $name => $value)
-         {
-             $field = $row->addChild('field', $value);
-             $field->addAttribute('name', $name);
-         }
-         
-         return $this->xml->asXML($this->file);
-=======
       * Add/Edit rows
       * @return asXML 
       */
@@ -326,7 +274,6 @@
          }
 
          throw new Exception('Nie wybrano rekordu do kasacji');
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
      }
 
  }
