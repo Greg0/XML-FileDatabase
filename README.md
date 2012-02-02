@@ -66,9 +66,47 @@ Don't use any methods after `select()`
 
 ###### Get few fields
 
-No need to get all of fields from record. you can specify names of fields you want to get in `select()` method by typing them in array.
+You haven't to load all fields from record. Possible to specify names of fields you want to get in `select()` method by typing them in array:
 
     select(array('title', 'content'))
 
+### Insert
 
+It's pretty simple:
+
+    $db = Database::factory('news');
+    
+    $db->title = 'Inserted news';
+    $db->author = 'me';
+    $db->content = 'Some content to my inserted news';
+
+    $db->save();
+It will add new row on the end of DOM.
+
+### Update
+
+It's very smilar to `Inserting`, you must set ID of row you want to edit in `factory()` second parameter.
+
+    $db = Database::factory('news',1); //Will edit row with ID 1
+    $db->select();
+
+    $db->title = 'Inserted news';
+    $db->author = 'me';
+    $db->content = 'Some content to my inserted news';
+
+    $db->save();
+Don;t forget about to call `select()` method
+
+### Remove
+
+    $db = Database::factory('news',1); //Will remove row with ID 1
+    $db->delete();
+
+
+Description
+------
+
+That's all for now, I think it is possible to write something else in future ;)
+
+My homepage: <http://greg0.ovh.org>
 
