@@ -42,7 +42,7 @@ I assume that our XML path looks like `db/news.xml`.
 
 ### Select
 
-##### Multiple select
+#### Multiple select
 
     $db = Database::factory('news');
     $news = $db->select()->order_by_desc()->find_all();
@@ -55,7 +55,7 @@ I assume that our XML path looks like `db/news.xml`.
     }
 No need to use `order_by_desc()`
 
-##### Single record select
+#### Single record select
 
     $db = Database::factory('news', 0);
     $news = $db->select();
@@ -66,7 +66,7 @@ No need to use `order_by_desc()`
 Type ID of record after file name in `factory()` method.
 Don't use any methods after `select()`
 
-###### Get few fields
+##### Get few fields
 
 You haven't to load all fields from record. Possible to specify names of fields you want to get in `select()` method by typing them in array:
 
