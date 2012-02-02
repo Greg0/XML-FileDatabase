@@ -3,12 +3,22 @@ XML File Based Database
 
 PHP Class to use XML file like a FlatFileDatabase
 
-Pozdro:
-
->   Super
 
 XML file database schema
 -------
+
+<pre>
+<?xml version="1.0" encoding="UTF-8"?>
+<table name="about">
+    <row>
+        <field name="title">nowy tytul</field>
+        <field name="name">grzes</field>
+        <field name="description">opis</field>
+    </row>
+</table>
+</pre>
+
+
 
 The following markups are supported.  The dependencies listed are required if
 you wish to run the library.
