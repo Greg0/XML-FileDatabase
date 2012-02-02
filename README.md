@@ -71,6 +71,7 @@ Don't use any methods after `select()`
 You haven't to load all fields from record. Possible to specify names of fields you want to get in `select()` method by typing them in array:
 
     select(array('title', 'content'))
+Will return only fields `title` and `content`
 
 ##### Chain methods for `select()`
 
