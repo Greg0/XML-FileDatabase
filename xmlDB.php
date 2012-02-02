@@ -3,8 +3,8 @@
  /**
   * PHP Class to use XML file like a FlatFileDatabase
   *
-  * @author Grego
-  * @copyright
+  * @author Grego http://greg0.ovh.org
+  * @copyright 2012 Grzegorz K.
   */
  class Data {
 
