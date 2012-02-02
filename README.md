@@ -7,7 +7,9 @@ PHP Class to use XML file(s) like a FlatFileDatabase
 XML file database schema
 -------
 
-For example table with few news (news.xml):
+Example of table `news` with few records.
+
+news.xml:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <table name="news">
