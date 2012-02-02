@@ -92,9 +92,9 @@ It's very smilar to `Inserting`, you must set ID of row you want to edit in `fac
     $db = Database::factory('news',1); //Will edit row with ID 1
     $db->select();
 
-    $db->title = 'Inserted news';
+    $db->title = 'Edited news';
     $db->author = 'me';
-    $db->content = 'Some content to my inserted news';
+    $db->content = 'Some edited content to my inserted news';
 
     $db->save();
 Don't forget about to call `select()` method
