@@ -33,7 +33,7 @@ news.xml:
 Usage
 ------
 
-First of all you should define constant DB_PATH containing path to folder with XMLs files and include class file:
+First of all you should define constant `DB_PATH` containing path to folder with XMLs files and include class file:
 
      define('DB_PATH', 'db/');
      require 'xmlDB.php';
