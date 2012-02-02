@@ -6,16 +6,16 @@ PHP Class to use XML file like a FlatFileDatabase
 
 XML file database schema
 -------
+This is a normal paragraph:
 
-<code>
-<?xml version="1.0" encoding="UTF-8"?>
-<table name="about">
-    <row>
-        <field name="title">nowy tytul</field>
-        <field name="name">grzes</field>
-        <field name="description">opis</field>
-    </row>
-</table></code>
+    <?xml version="1.0" encoding="UTF-8"?>
+    <table name="about">
+        <row>
+            <field name="title">nowy tytul</field>
+            <field name="name">grzes</field>
+            <field name="description">opis</field>
+        </row>
+    </table></code>
 
 
 
