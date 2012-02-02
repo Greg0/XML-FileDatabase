@@ -6,106 +6,69 @@ PHP Class to use XML file like a FlatFileDatabase
 
 XML file database schema
 -------
-This is a normal paragraph:
+
+For example table with few news (news.xml):
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <table name="about">
+    <table name="news">
         <row>
-            <field name="title">nowy tytul</field>
-            <field name="name">grzes</field>
-            <field name="description">opis</field>
+            <field name="title">My first news</field>
+            <field name="author">Grego</field>
+            <field name="content">
+              Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies. 
+            </field>
+        </row>
+        <row>
+            <field name="title">Some second news</field>
+            <field name="author">Admin</field>
+            <field name="content">
+              Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim.
+            </field>
         </row>
     </table></code>
 
 
-
-
-The following markups are supported.  The dependencies listed are required if
-you wish to run the library.
-
-* [.markdown](http://daringfireball.net/projects/markdown/) -- `gem install redcarpet` (https://github.com/tanoku/redcarpet)
-* [.textile](http://www.textism.com/tools/textile/) -- `gem install RedCloth`
-* [.rdoc](http://rdoc.sourceforge.net/) -- `gem install rdoc -v 3.6.1`
-* [.org](http://orgmode.org/) -- `gem install org-ruby`
-* [.creole](http://wikicreole.org/) -- `gem install creole`
-* [.mediawiki](http://www.mediawiki.org/wiki/Help:Formatting) -- `gem install wikicloth`
-* [.rst](http://docutils.sourceforge.net/rst.html) -- `easy_install docutils`
-* [.asciidoc](http://www.methods.co.nz/asciidoc/) -- `brew install asciidoc`
-* [.pod](http://search.cpan.org/dist/perl/pod/perlpod.pod) -- `Pod::Simple::HTML`
-  comes with Perl >= 5.10. Lower versions should install Pod::Simple from CPAN.
-
-
-Contributing
-------------
-
-Want to contribute? Great! There are two ways to add markups.
-
-
-### Commands
-
-If your markup is in a language other than Ruby, drop a translator
-script in `lib/github/commands` which accepts input on STDIN and
-returns HTML on STDOUT. See [rest2html][r2h] for an example.
-
-Once your script is in place, edit `lib/github/markups.rb` and tell
-GitHub Markup about it. Again we look to [rest2html][r2hc] for
-guidance:
-
-    command(:rest2html, /re?st(.txt)?/)
-
-Here we're telling GitHub Markup of the existence of a `rest2html`
-command which should be used for any file ending in `rest`,
-`rst`, `rest.txt` or `rst.txt`. Any regular expression will do.
-
-Finally add your tests. Create a `README.extension` in `test/markups`
-along with a `README.extension.html`. As you may imagine, the
-`README.extension` should be your known input and the
-`README.extension.html` should be the desired output.
-
-Now run the tests: `rake`
-
-If nothing complains, congratulations!
-
-
-### Classes
-
-If your markup can be translated using a Ruby library, that's
-great. Check out Check `lib/github/markups.rb` for some
-examples. Let's look at Markdown:
-
-    markup(:markdown, /md|mkdn?|markdown/) do |content|
-      Markdown.new(content).to_html
-    end
-
-We give the `markup` method three bits of information: the name of the
-file to `require`, a regular expression for extensions to match, and a
-block to run with unformatted markup which should return HTML.
-
-If you need to monkeypatch a RubyGem or something, check out the
-included RDoc example.
-
-Tests should be added in the same manner as described under the
-`Commands` section.
-
-
-Installation
------------
-
-    gem install github-markup
-
-
 Usage
------
+------
 
-    require 'github/markup'
-    GitHub::Markup.render('README.markdown', "* One\n* Two")
+First of all you should define constant DB_PATH containing path to folder with XMLs files and include class file:
 
-Or, more realistically:
+     define('DB_PATH', 'db/');
+     require 'xmlDB.php';
 
-    require 'github/markup'
-    GitHub::Markup.render(file, File.read(file))
+I assume that our XML path looks like `db/news.xml`.
+
+### Select
+
+##### Multiple select
+
+    $db = Database::factory('news');
+    $news = $db->select()->order_by_desc()->find_all();
+    
+    foreach($news as $post)
+    {
+      echo '<h1>'.$post->title.'</h1>';
+      echo '<small>author: '.$post->author.'</small>';
+      echo '<p>'.$post->content.'</p>';
+    }
+No need to use `order_by_desc()`
+
+##### Single record select
+
+    $db = Database::factory('news', 0);
+    $news = $db->select();
+
+    echo '<h1>'.$news->title.'</h1>';
+    echo '<small>author: '.$news->author.'</small>';
+    echo '<p>'.$news->content.'</p>';
+Type ID of record after file name in `factory()` method.
+Don't use any methods after `select()`
+
+###### Get few fields
+
+No need to get all of fields from record. you can specify names of fields you want to get in `select()` method by typing them in array.
+
+    select(array('title', 'content'))
 
 
-[r2h]: http://github.com/github/markup/tree/master/lib/github/commands/rest2html
-[r2hc]: http://github.com/github/markup/tree/master/lib/github/markups.rb#L13
-[1]: http://github.com/github/markup/issues
+
