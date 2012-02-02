@@ -10,6 +10,7 @@ XML file database schema
 Example of table `news` with few records
 
 `news.xml`:
+
     <?xml version="1.0" encoding="UTF-8"?>
     <table name="news">
         <row>
