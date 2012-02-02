@@ -35,7 +35,7 @@ Usage
 
 First of all you should define constant `DB_PATH` containing path to folder with XMLs files and include class file:
 
-     define('DB_PATH', 'db/');
+     define('DB_PATH', __DIR__.'/db/');
      require 'xmlDB.php';
 
 I assume that our XML path looks like `db/news.xml`.
