@@ -7,7 +7,7 @@ PHP Class to use XML file like a FlatFileDatabase
 XML file database schema
 -------
 
-<pre><code>
+<code>
 <?xml version="1.0" encoding="UTF-8"?>
 <table name="about">
     <row>
@@ -16,7 +16,7 @@ XML file database schema
         <field name="description">opis</field>
     </row>
 </table></code>
-</pre>
+
 
 
 
