@@ -27,7 +27,7 @@ news.xml:
               Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim.
             </field>
         </row>
-    </table></code>
+    </table>
 
 
 Usage
