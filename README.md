@@ -1,7 +1,7 @@
-XML File Based Database
+File Database based on XML 
 =============
 
-PHP Class to use XML file like a FlatFileDatabase
+PHP Class to use XML file(s) like a FlatFileDatabase
 
 
 XML file database schema
