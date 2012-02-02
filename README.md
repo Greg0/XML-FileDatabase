@@ -7,7 +7,7 @@ PHP Class to use XML file(s) like a FlatFileDatabase
 XML file database schema
 -------
 
-For example table with few news (news.xml):
+Example of table `news` with few records (`news.xml`):
 
     <?xml version="1.0" encoding="UTF-8"?>
     <table name="news">
@@ -31,7 +31,7 @@ For example table with few news (news.xml):
 Usage
 ------
 
-First of all you should define constant DB_PATH containing path to folder with XMLs files and include class file:
+First of all you should define constant `DB_PATH` containing path to folder with XMLs files and include class file:
 
      define('DB_PATH', 'db/');
      require 'xmlDB.php';
