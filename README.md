@@ -1,10 +1,13 @@
 XML File Based Database
 =============
 
-We use this library on GitHub when rendering your README or any other
-rich text file.
+PHP Class to use XML file like a FlatFileDatabase
 
-Markups
+Pozdro:
+
+   Super
+
+XML file database schema
 -------
 
 The following markups are supported.  The dependencies listed are required if
