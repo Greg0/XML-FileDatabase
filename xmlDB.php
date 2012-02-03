@@ -6,6 +6,9 @@
   * @author Grego http://greg0.ovh.org
   * @copyright 2012 Grzegorz K.
   */
+
+
+
  class Data {
 
      private static $_instance;
