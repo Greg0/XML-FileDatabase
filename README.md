@@ -75,7 +75,8 @@ Will return only fields `title` and `content`
 
 ##### Chain methods for `select()`
 
-- `order_by_desc()` - sort rows from oldest to newest
+- `order_by_desc()` - sort rows from oldest to newest.
+- `limit()` - return specified number of rows. Second parameter (optional) it's offset.
 
 ### Insert
 
