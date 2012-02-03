@@ -146,7 +146,7 @@
 
                  foreach ($row->field as $field)
                  {
-                     $obj->{$field->attributes()->name} = $field;
+                     $obj->{$field->attributes()->name} = (string) $field;
                  }
                  $this->_data[] = $obj;
              }
@@ -187,6 +187,18 @@
              $this->_data = array_reverse($this->_data, true);
          }
 
+         return $this;
+     }
+     
+     /**
+      * Set limit to array of Data objects
+      * @param int $number number of rows
+      * @param int $offset offset 
+      * @return \Database 
+      */
+     public function limit($number, $offset=0)
+     {
+         $this->_data = array_slice($this->_data, $offset, $number);
          return $this;
      }
 
