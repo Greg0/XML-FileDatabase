@@ -6,9 +6,6 @@
   * @author Grego http://greg0.ovh.org
   * @copyright 2012 Grzegorz K.
   */
-
-
-
  class Data {
 
      private static $_instance;
@@ -143,7 +140,9 @@
 
          if (!is_numeric($this->_row_id))
          {
-             $id=0;
+             $this->check_records($xml->row);
+             
+             $id = 0;
              foreach ($xml->row as $row)
              {
                  $obj = clone $data;
@@ -152,7 +151,7 @@
                  {
                      $obj->{$field->attributes()->name} = (string) $field;
                  }
-                 
+
                  $this->_data[] = $obj;
                  $id++;
              }
@@ -161,6 +160,9 @@
          {
              $row_id = (int) $this->_row_id;
              $fields = $xml->row[$row_id];
+             
+             $this->check_records($fields);
+
              $obj = $data;
 
              foreach ($fields as $field)
@@ -173,6 +175,14 @@
          }
 
          return $this;
+     }
+
+     private function check_records($record)
+     {
+         if (!$record)
+         {
+             throw new Exception('Brak rekordu w bazie');
+         }
      }
 
      /**
@@ -197,14 +207,14 @@
 
          return $this;
      }
-     
+
      /**
       * Set limit to array of Data objects
       * @param int $number number of rows
       * @param int $offset offset 
       * @return \Database 
       */
-     public function limit($number, $offset=0)
+     public function limit($number, $offset = 0)
      {
          $this->_data = array_slice($this->_data, $offset, $number);
          return $this;
@@ -243,7 +253,7 @@
              $this->_xml_to_object();
          }
          catch (Exception $msg) {
-             throw new Exception('Brak rekordu');
+             throw new ErrorException($msg->getMessage());
          }
 
          return (is_numeric($this->_row_id)) ? Data::getInstance() : $this;
