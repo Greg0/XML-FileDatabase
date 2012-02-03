@@ -44,8 +44,8 @@ I assume that our XML path looks like `db/news.xml`.
 
 #### Multiple select
 
-    $db = Database::factory('news');
-    $news = $db->select()->order_by_desc()->find_all();
+    $rows = Database::factory('news');
+    $news = $rows->select()->order_by_desc()->find_all();
     
     foreach($news as $post)
     {
@@ -57,8 +57,8 @@ No need to use `order_by_desc()`
 
 #### Single record select
 
-    $db = Database::factory('news', 0);
-    $news = $db->select();
+    $row = Database::factory('news', 0);
+    $news = $row->select();
 
     echo '<h1>'.$news->title.'</h1>';
     echo '<small>author: '.$news->author.'</small>';
@@ -81,33 +81,33 @@ Will return only fields `title` and `content`
 
 It's pretty simple:
 
-    $db = Database::factory('news');
+    $row = Database::factory('news');
     
-    $db->title = 'Inserted news';
-    $db->author = 'me';
-    $db->content = 'Some content to my inserted news';
+    $row->title = 'Inserted news';
+    $row->author = 'me';
+    $row->content = 'Some content to my inserted news';
 
-    $db->save();
+    $row->save();
 It will add new row on the end of DOM.
 
 ### Update
 
 It's very smilar to `Inserting`, you must set ID of row you want to edit in `factory()` second parameter.
 
-    $db = Database::factory('news',1); //Will edit row with ID 1
-    $db->select();
+    $row = Database::factory('news',1); //Will edit row with ID 1
+    $row->select();
 
-    $db->title = 'Edited news';
-    $db->author = 'me';
-    $db->content = 'Some edited content to my inserted news';
+    $row->title = 'Edited news';
+    $row->author = 'me';
+    $row->content = 'Some edited content to my inserted news';
 
-    $db->save();
+    $row->save();
 Don't forget about to call `select()` method
 
 ### Remove
 
-    $db = Database::factory('news',1); //Will remove row with ID 1
-    $db->delete();
+    $row = Database::factory('news',1); //Will remove row with ID 1
+    $row->delete();
 
 
 Description
