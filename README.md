@@ -73,10 +73,11 @@ You haven't to load all fields from record. Possible to specify names of fields 
     select(array('title', 'content'))
 Will return only fields `title` and `content`
 
-##### Chain methods for `select()`
+##### Chain methods for `select()` in multiple mode
 
-- `order_by_desc()` - sort rows from oldest to newest.
-- `limit()` - return specified number of rows. Second parameter (optional) it's offset.
+- `find_all()` - returns array of rows.  `required`
+- `order_by_desc()` - sort rows from oldest to newest.  `optional`
+- `limit()` - return specified number of rows. Second parameter (optional) it's offset.  `optional`
 
 ### Insert
 
