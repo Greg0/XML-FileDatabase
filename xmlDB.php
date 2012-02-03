@@ -129,6 +129,20 @@
          return $this;
      }
 
+
+     /**
+      * Check for records
+      * @param mixed $record
+      * @throws Exception No record found
+      */
+     private function check_records($record)
+     {
+         if (!$record)
+         {
+             throw new Exception('No data found');
+         }
+     }
+     
      /**
       * Insert XMl into Data object and put instance into this->_data
       * @return \Database
@@ -175,14 +189,6 @@
          }
 
          return $this;
-     }
-
-     private function check_records($record)
-     {
-         if (!$record)
-         {
-             throw new Exception('Brak rekordu w bazie');
-         }
      }
 
      /**
@@ -293,7 +299,7 @@
      /**
       * Delete row
       * @return string
-      * @throws Exception nie wybrano rekordu
+      * @throws Exception row ID not specified
       */
      public function delete()
      {
@@ -303,7 +309,7 @@
              return $this->xml->asXML($this->file);
          }
 
-         throw new Exception('Nie wybrano rekordu do kasacji');
+         throw new Exception('Row ID not specified');
      }
 
  }
