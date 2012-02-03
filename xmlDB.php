@@ -152,7 +152,7 @@
          $xml = $this->xml;
          $data = Data::getInstance();
 
-         if (!is_numeric($this->_row_id))
+         if (!isset($this->_row_id))
          {
              $this->check_records($xml->row);
              
@@ -259,10 +259,10 @@
              $this->_xml_to_object();
          }
          catch (Exception $msg) {
-             throw new ErrorException($msg->getMessage());
+             throw $msg;
          }
 
-         return (is_numeric($this->_row_id)) ? Data::getInstance() : $this;
+         return (isset($this->_row_id)) ? Data::getInstance() : $this;
      }
 
      /**
@@ -273,7 +273,7 @@
      {
          $data = Data::getInstance();
 
-         if (is_numeric($this->_row_id))
+         if (isset($this->_row_id))
          {
              $row = $this->xml->row[$this->_row_id];
              $i = 0;
