@@ -140,27 +140,32 @@
 
          if (!is_numeric($this->_row_id))
          {
+             $id=0;
              foreach ($xml->row as $row)
              {
                  $obj = clone $data;
-
+                 $obj->id = $id;
                  foreach ($row->field as $field)
                  {
                      $obj->{$field->attributes()->name} = (string) $field;
                  }
+                 
                  $this->_data[] = $obj;
+                 $id++;
              }
          }
          else
          {
-             $row = (int) $this->_row_id;
-             $fields = $xml->row[$row];
+             $row_id = (int) $this->_row_id;
+             $fields = $xml->row[$row_id];
              $obj = $data;
 
              foreach ($fields as $field)
              {
                  $obj->{$field->attributes()->name} = $field;
              }
+             $obj->id = $row_id;
+
              $this->_data = $obj;
          }
 
