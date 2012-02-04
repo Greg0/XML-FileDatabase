@@ -281,7 +281,8 @@
              $i = 0;
              foreach (get_object_vars($data) as $name => $value)
              {
-                 $row->field[$i] = $value;
+                 if($name != 'id')
+                    $row->field[$i] = $value;
                  $i++;
              }
          }
