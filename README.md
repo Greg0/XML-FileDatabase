@@ -61,7 +61,7 @@ No need to use `order_by_desc()`
     $news = $row->select();
 
     echo '<h1>'.$news->title.'</h1>';
-    echo '<small>author: '.$news->author.', ID: '.$post->id.'</small>';
+    echo '<small>author: '.$news->author.', ID: '.$news->id.'</small>';
     echo '<p>'.$news->content.'</p>';
 Type ID of record after file name in `factory()` method.
 Don't use any methods after `select()`
