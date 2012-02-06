@@ -44,8 +44,8 @@ I assume that our XML path looks like `db/news.xml`.
 
 #### Multiple select
 
-    $rows = Database::factory('news');
-    $news = $rows->select()->order_by_desc()->find_all();
+    $news = Database::factory('news')
+              ->select()->order_by_desc()->find_all();
     
     foreach($news as $post)
     {
@@ -57,8 +57,8 @@ No need to use `order_by_desc()`
 
 #### Single record select
 
-    $row = Database::factory('news', 0);
-    $news = $row->select();
+    $news = Database::factory('news', 0)
+              ->select();
 
     echo '<h1>'.$news->title.'</h1>';
     echo '<small>author: '.$news->author.', ID: '.$news->id.'</small>';
@@ -96,8 +96,8 @@ It will add new row on the end of DOM.
 
 It's very smilar to `Inserting`, you must set ID of row you want to edit in `factory()` second parameter.
 
-    $row = Database::factory('news',1); //Will edit row with ID 1
-    $row->select();
+    $row = Database::factory('news',1) //Will edit row with ID 1
+              ->select();
 
     $row->title = 'Edited news';
     $row->author = 'me';
