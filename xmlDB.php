@@ -126,7 +126,7 @@
              $this->file = $this->file_path.$filename.'.xml';
              $this->_file_name = $filename;
              $this->_file_content = file_get_contents($this->file);
-             $this->_row_id = ($id!=null) ? (int) $id : null;
+             $this->_row_id = ($id!==null) ? (int) $id : null;
          }
          return $this;
      }
