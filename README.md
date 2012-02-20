@@ -76,7 +76,7 @@ Will return only fields `title` and `content`
 ##### Chain methods for `select()` in multiple mode
 
 - `find_all()` - returns array of rows.  `required`
-- `order_by_desc()` - sort rows from oldest to newest.  `optional`
+- `order_by_desc()` - sort rows from newest to oldest.  `optional`
 - `limit()` - return specified number of rows. Second parameter (optional) it's offset.  `optional`
 
 ### Insert
