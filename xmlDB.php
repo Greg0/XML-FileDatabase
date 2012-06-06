@@ -203,6 +203,38 @@
      }
 
      /**
+      * Returning row(s) with specified field value
+      * @param   string   column name
+      * @param   string  logic operator
+      * @param   string   column value
+      * @return  $this
+      */
+     public function where($column, $op, $value)
+     {
+         $operator = array(
+             '=' => '!=',
+             '!=' => '==',
+             '>' => '<=',
+             '<' => '>=',
+             '>=' => '<',
+             '<=' => '>'
+         );
+
+
+         foreach ($this->_data as $row)
+         {
+             eval('$exec = strtolower($row->{$column}) '.$operator[$op].' strtolower($value);');
+
+             if ($exec)
+             {
+                 unset($this->_data[$row->id]);
+             }
+         }
+
+         return $this;
+     }
+
+     /**
       * Sort array of objects DESC by ID
       * @return \Database 
       */
