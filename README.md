@@ -78,7 +78,7 @@ Will return only fields `title` and `content`
 - `find_all()` - returns array of rows.  `required`
 - `order_by_desc()` - sort rows from newest to oldest.  `optional`
 - `limit()` - return specified number of rows. Second parameter (optional) it's offset.  `optional`
-
+- `where()` - return row(s) with specified field value - (column, operator, value).  `optional`
 ### Insert
 
 It's pretty simple:
