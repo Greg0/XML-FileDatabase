@@ -6,8 +6,6 @@
   * @author Grego http://greg0.ovh.org
   * @copyright 2012 Grzegorz K.
   */
- 
- 
  class Data {
 
      private static $_instance;
@@ -83,6 +81,34 @@
      }
 
      /**
+      * Creating new database
+      * @param string $filename name of file without extension
+      */
+     public static function create($filename)
+     {
+         $content = '<?xml version="1.0" encoding="UTF-8"?>
+<table name="'.$filename.'">
+</table>';
+         $db = new Database();
+         if (!file_exists($db->file_path.$filename.'.xml'))
+         {
+             file_put_contents($db->file_path.$filename.'.xml', $content);
+         }
+         else
+             throw new Exception('Database already exists');
+     }
+
+     /**
+      * Remove database
+      * @param string $filename name of file without extension
+      */
+     public static function remove($filename)
+     {
+         $db = new Database();
+         unlink($db->file_path.$filename.'.xml');
+     }
+
+     /**
       * Set fields to Data object
       * @param string $name
       * @param string $value
@@ -126,11 +152,10 @@
              $this->file = $this->file_path.$filename.'.xml';
              $this->_file_name = $filename;
              $this->_file_content = file_get_contents($this->file);
-             $this->_row_id = ($id!==null) ? (int) $id : null;
+             $this->_row_id = ($id !== null) ? (int) $id : null;
          }
          return $this;
      }
-
 
      /**
       * Check for records
@@ -144,7 +169,7 @@
              throw new Exception('No data found');
          }
      }
-     
+
      /**
       * Insert XMl into Data object and put instance into this->_data
       * @return \Database
@@ -157,7 +182,7 @@
          if (!isset($this->_row_id))
          {
              $this->check_records($xml->row);
-             
+
              $id = 0;
              foreach ($xml->row as $row)
              {
@@ -176,7 +201,7 @@
          {
              $row_id = (int) $this->_row_id;
              $fields = $xml->row[$row_id];
-             
+
              $this->check_records($fields);
 
              $obj = $data;
@@ -200,6 +225,32 @@
      public function find_all()
      {
          return $this->_data;
+     }
+
+     /**
+      * Sort array of objects DESC by ID
+      * @return \Database 
+      */
+     public function order_by_desc()
+     {
+         if (is_array($this->_data))
+         {
+             $this->_data = array_reverse($this->_data, true);
+         }
+
+         return $this;
+     }
+
+     /**
+      * Set limit to array of Data objects
+      * @param int $number number of rows
+      * @param int $offset offset 
+      * @return \Database 
+      */
+     public function limit($number, $offset = 0)
+     {
+         $this->_data = array_slice($this->_data, $offset, $number);
+         return $this;
      }
 
      /**
@@ -231,32 +282,6 @@
              }
          }
 
-         return $this;
-     }
-
-     /**
-      * Sort array of objects DESC by ID
-      * @return \Database 
-      */
-     public function order_by_desc()
-     {
-         if (is_array($this->_data))
-         {
-             $this->_data = array_reverse($this->_data, true);
-         }
-
-         return $this;
-     }
-
-     /**
-      * Set limit to array of Data objects
-      * @param int $number number of rows
-      * @param int $offset offset 
-      * @return \Database 
-      */
-     public function limit($number, $offset = 0)
-     {
-         $this->_data = array_slice($this->_data, $offset, $number);
          return $this;
      }
 
@@ -313,8 +338,8 @@
              $i = 0;
              foreach (get_object_vars($data) as $name => $value)
              {
-                 if($name != 'id')
-                    $row->field[$i] = $value;
+                 if ($name != 'id')
+                     $row->field[$i] = $value;
                  $i++;
              }
          }
