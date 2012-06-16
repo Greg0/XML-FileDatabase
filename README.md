@@ -40,6 +40,14 @@ First of all you should define constant `DB_PATH` containing absolute path to fo
 
 I assume that our XML path looks like `db/news.xml`.
 
+### Create database
+
+    Database::create('name_of_database');
+	
+### Remove database
+
+    Database::remove('name_of_database');
+
 ### Select
 
 #### Multiple select
