@@ -56,7 +56,7 @@
 
      /**
       * Contain id of selected ROW if is set.
-      * @var type 
+      * @var int
       */
      private $_row_id = null;
 
@@ -65,6 +65,18 @@
       * @var object|array 
       */
      private $_data;
+
+     /**
+      * Contain key to order_by() method
+      * @var int|string
+      */
+     private $_key;
+
+     /**
+      * Contain order way to order_by() method
+      * @var int|string
+      */
+     private $_order;
 
      /**
       * Factory pattern to load needed Classes
@@ -217,6 +229,30 @@
 
          return $this;
      }
+     
+     /**
+      * comparison function to usort in order_by() method
+      * @param obj $obja
+      * @param obj $objb
+      * @return int 
+      */
+     private function cmp($obja, $objb)
+     {
+         $a = $obja->{$this->_key};
+         $b = $objb->{$this->_key};
+         if ($a == $b)
+         {
+             return 0;
+         }
+         if ($this->_order == 'ASC')
+         {
+             return ($a < $b) ? -1 : 1;
+         }
+         elseif ($this->_order == 'DESC')
+         {
+             return ($a > $b) ? -1 : 1;
+         }
+     }
 
      /**
       * Returning data for multi select
@@ -231,11 +267,14 @@
       * Sort array of objects DESC by ID
       * @return \Database 
       */
-     public function order_by_desc()
+     public function order_by($key, $order = 'ASC')
      {
+         $this->_key = $key;
+         $this->_order = $order;
+
          if (is_array($this->_data))
          {
-             $this->_data = array_reverse($this->_data, true);
+             usort($this->_data, array($this, "cmp"));
          }
 
          return $this;
