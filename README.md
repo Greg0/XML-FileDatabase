@@ -3,6 +3,12 @@ File Database based on XML
 
 PHP Class to use XML file(s) like a FlatFileDatabase
 
+Requirements
+------
+
+- PHP 5.3 +
+- SimpleXML
+- DOMXPath
 
 XML file database schema
 -------
@@ -53,7 +59,7 @@ I assume that our XML path looks like `db/news.xml`.
 #### Multiple select
 
     $news = Database::factory('news')
-              ->select()->order_by_desc()->find_all();
+              ->select()->order_by('id', 'DESC')->find_all();
     
     foreach($news as $post)
     {
@@ -84,7 +90,7 @@ Will return only fields `title` and `content`
 ##### Chain methods for `select()` in multiple mode
 
 - `find_all()` - returns array of rows.  `required`
-- `order_by_desc()` - sort rows from newest to oldest.  `optional`
+- `order_by()` - sort rows by key and in order. First parameter is `key` second (optional) `order`.  `optional`
 - `limit()` - return specified number of rows. Second parameter (optional) it's offset.  `optional`
 - `where()` - return row(s) with specified field value - (column, operator, value).  `optional`
 
