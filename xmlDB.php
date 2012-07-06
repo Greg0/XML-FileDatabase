@@ -264,6 +264,15 @@
      }
 
      /**
+      * Returning count of rows
+      * @return \Data
+      */
+     public function count()
+     {
+         return count($this->_data);
+     }
+
+     /**
       * Sort array of objects DESC by ID
       * @return \Database 
       */
