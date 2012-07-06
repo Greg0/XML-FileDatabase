@@ -383,7 +383,7 @@
          if (isset($this->_row_id))
          {
              $row = $this->xml->row[$this->_row_id];
-             $i = 0;
+             $i = 1;
              foreach (get_object_vars($data) as $name => $value)
              {
                  if ($name != 'id')
