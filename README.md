@@ -71,7 +71,7 @@ No need to use `order_by_desc()`
 
 #### Single record select
 
-    $news = Database::factory('news', 0)
+    $news = Database::factory('news', 1)
               ->select();
 
     echo '<h1>'.$news->title.'</h1>';
