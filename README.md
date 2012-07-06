@@ -89,11 +89,11 @@ Will return only fields `title` and `content`
 
 ##### Chain methods for `select()` in multiple mode
 
-- `find_all()` - returns array of rows.  `required`
-- `order_by()` - sort rows by key and in order. First parameter is `key` second (optional) `order`.  `optional`
-- `limit()` - return specified number of rows. Second parameter (optional) it's offset.  `optional`
-- `where()` - return row(s) with specified field value - (column, operator, value).  `optional`
-- `count()` - return count of rows.
+- `find_all()` - returns array of rows. 
+- `count()` - return count of rows. 
+- `order_by()` - sort rows by key and in order. First parameter is `key` second (optional) `order`. 
+- `limit()` - return specified number of rows. Second parameter (optional) it's offset.
+- `where()` - return row(s) with specified field value - (column, operator, value). 
 
 ### Insert
 
