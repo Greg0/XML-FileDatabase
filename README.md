@@ -93,6 +93,7 @@ Will return only fields `title` and `content`
 - `order_by()` - sort rows by key and in order. First parameter is `key` second (optional) `order`.  `optional`
 - `limit()` - return specified number of rows. Second parameter (optional) it's offset.  `optional`
 - `where()` - return row(s) with specified field value - (column, operator, value).  `optional`
+- `count()` - return count of rows.
 
 ### Insert
 
