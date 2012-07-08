@@ -265,7 +265,7 @@
 
      /**
       * Returning count of rows
-      * @return \Data
+      * @return int
       */
      public function count()
      {
@@ -383,7 +383,7 @@
          if (isset($this->_row_id))
          {
              $row = $this->xml->row[$this->_row_id];
-             $i = 1;
+             $i = 0;
              foreach (get_object_vars($data) as $name => $value)
              {
                  if ($name != 'id')
@@ -415,8 +415,17 @@
              unset($this->xml->row[$this->_row_id]);
              return $this->xml->asXML($this->file);
          }
+         else
+         {
+             foreach(array_reverse($this->_data) as $obj)
+             {
+                unset($this->xml->row[$obj->id]);
+             }
+             return $this->xml->asXML($this->file);
 
-         throw new Exception('Row ID not specified');
+         }
+
+         throw new Exception('Error with deleting');
      }
 
  }
