@@ -124,9 +124,14 @@ Don't forget about to call `select()` method
 
 ### Remove
 
+#### Single record deleting
+
     $row = Database::factory('news',1); //Will remove row with ID 1
     $row->delete();
 
+#### Multiple records deleting
+
+    Database::factory('news')->select()->where('author', '=', 'admin')->delete();
 
 Description
 ------
