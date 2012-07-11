@@ -6,7 +6,7 @@ PHP Class to use XML file(s) like a FlatFileDatabase
 Requirements
 ------
 
-- PHP 5.3 +
+- PHP 5 +
 - SimpleXML
 - DOMXPath
 
