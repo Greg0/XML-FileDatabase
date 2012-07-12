@@ -316,7 +316,7 @@
       * Getting all conditions to array
       * @return  $this
       */
-     public function where()
+     public function where($column, $operator, $value)
      {
          $condition = func_get_args();
          is_array(reset($condition)) and $condition = reset($condition);
