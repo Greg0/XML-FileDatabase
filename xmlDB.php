@@ -79,6 +79,12 @@
      private $_order;
 
      /**
+      * 
+      * @var array
+      */
+     private $_where = array();
+
+     /**
       * Factory pattern to load needed Classes
       * @param string $filename name of file without extension
       * @param int $id optional ID of row we want to select
@@ -229,7 +235,7 @@
 
          return $this;
      }
-     
+
      /**
       * comparison function to usort in order_by() method
       * @param obj $obja
@@ -260,6 +266,11 @@
       */
      public function find_all()
      {
+         if (is_array($this->_where) AND !empty($this->_where))
+         {
+             call_user_func(array($this, '_where'));
+         }
+
          return $this->_data;
      }
 
@@ -302,33 +313,66 @@
      }
 
      /**
-      * Returning row(s) with specified field value
-      * @param   string   column name
-      * @param   string  logic operator
-      * @param   string   column value
+      * Getting all conditions to array
       * @return  $this
       */
-     public function where($column, $op, $value)
+     public function where()
+     {
+         $condition = func_get_args();
+         is_array(reset($condition)) and $condition = reset($condition);
+
+         $this->_where[] = $condition;
+
+         return $this;
+     }
+
+     /**
+      * Callback function for array_filter() in _where() method
+      * @param type $row
+      * @return boolean 
+      */
+     private function _where_filter($row)
      {
          $operator = array(
-             '=' => '!=',
-             '!=' => '==',
-             '>' => '<=',
-             '<' => '>=',
-             '>=' => '<',
-             '<=' => '>'
+             '=' => '==',
+             '!=' => '!=',
+             '>' => '>',
+             '<' => '<',
+             '>=' => '>=',
+             '<=' => '<='
          );
 
+         $result = true;
 
-         foreach ($this->_data as $row)
+         foreach ($this->_where as $where)
          {
-             eval('$exec = strtolower($row->{$column}) '.$operator[$op].' strtolower($value);');
+             $column = $where[0];
+             $op = $where[1];
+             $value = $where[2];
 
+             eval('$exec = strtolower($row->{$column}) '.$operator[$op].' strtolower($value);');
              if ($exec)
              {
-                 unset($this->_data[$row->id]);
+                 $result = true;
+                 continue;
+             }
+             else
+             {
+                 $result = false;
+                 break;
              }
          }
+
+         return $result;
+     }
+
+     /**
+      * Filtering array of results
+      * @return \Database 
+      */
+     private function _where()
+     {
+         $this->_data = array_filter($this->_data, array($this, '_where_filter'));
 
          return $this;
      }
@@ -378,29 +422,47 @@
       */
      public function save()
      {
-         $data = Data::getInstance();
-
          if (isset($this->_row_id))
          {
-             $row = $this->xml->row[$this->_row_id];
-             $i = 0;
-             foreach (get_object_vars($data) as $name => $value)
-             {
-                 if ($name != 'id')
-                     $row->field[$i] = $value;
-                 $i++;
-             }
+             $this->_edit();
          }
          else
          {
-             $row = $this->xml->addChild('row');
-             foreach (get_object_vars($data) as $name => $value)
-             {
-                 $field = $row->addChild('field', $value);
-                 $field->addAttribute('name', $name);
-             }
+             $this->_add();
          }
          return $this->xml->asXML($this->file);
+     }
+
+     /**
+      * Edit row
+      */
+     private function _edit()
+     {
+         $data = Data::getInstance();
+
+         $row = $this->xml->row[$this->_row_id];
+         $i = 0;
+         foreach (get_object_vars($data) as $name => $value)
+         {
+             if ($name != 'id')
+                 $row->field[$i] = $value;
+             $i++;
+         }
+     }
+
+     /**
+      * Add row
+      */
+     private function _add()
+     {
+         $data = Data::getInstance();
+
+         $row = $this->xml->addChild('row');
+         foreach (get_object_vars($data) as $name => $value)
+         {
+             $field = $row->addChild('field', $value);
+             $field->addAttribute('name', $name);
+         }
      }
 
      /**
@@ -417,12 +479,11 @@
          }
          else
          {
-             foreach(array_reverse($this->_data) as $obj)
+             foreach (array_reverse($this->_data) as $obj)
              {
-                unset($this->xml->row[$obj->id]);
+                 unset($this->xml->row[$obj->id]);
              }
              return $this->xml->asXML($this->file);
-
          }
 
          throw new Exception('Error with deleting');
