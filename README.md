@@ -112,8 +112,8 @@ It will add new row on the end of DOM.
 
 It's very smilar to `Inserting`, you must set ID of row you want to edit in `factory()` second parameter.
 
-    $row = Database::factory('news',1) //Will edit row with ID 1
-              ->select();
+    $row = Database::factory('news',1); //Will edit row with ID 1
+    $row->select();
 
     $row->title = 'Edited news';
     $row->author = 'me';
