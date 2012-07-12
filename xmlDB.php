@@ -311,10 +311,13 @@
          $this->_data = array_slice($this->_data, $offset, $number);
          return $this;
      }
-
+     
      /**
       * Getting all conditions to array
-      * @return  $this
+      * @param mixed $column
+      * @param string $operator
+      * @param mixed $value
+      * @return $this
       */
      public function where($column, $operator, $value)
      {
