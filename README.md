@@ -94,7 +94,9 @@ Will return only fields `title` and `content`
 - `order_by()` - sort rows by key and in order. First parameter is `key` second (optional) `order`. 
 - `limit()` - return specified number of rows. Second parameter (optional) it's offset.
 - `where()` - return row(s) with specified field value - (column, operator, value). 
-
+- `or_where()` - alias for where(). Other type of sorting results. Example:
+     $row = Database::factory('news')->select()->where('author', '=', 'admin')->or_where('author', '=', 'me')->find_all();
+     //will return all news where author is Admin and Me
 ### Insert
 
 It's pretty simple:
