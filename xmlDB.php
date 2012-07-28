@@ -1,5 +1,21 @@
 <?php
 
+ namespace app\libraries;
+
+ use lithium\core\NetworkException;
+ use Exception;
+
+ define('DB_PATH', dirname(__DIR__).'/database/data/');
+
+ defined('DB_PATH') or die('Define your DB_PATH constance');
+ /**
+  * The `Mock` data source is used behind-the-scenes when a model does not use a backend data source.
+  * It implements the necessary methods, but does not support querying and has no storage backend.
+  * It can create generic entities for use in forms and elsewhere within the framework. This allows
+  * developers to create domain objects with business logic and schemas, without worrying about
+  * backend storage.
+  */
+
  /**
   * PHP Class to use XML file like a FlatFileDatabase
   *
@@ -19,7 +35,6 @@
 
          return self::$_instance;
      }
-
  }
 
  class Database {
@@ -61,8 +76,14 @@
      private $_row_id = null;
 
      /**
-      * Instance of Data object or Objects array
-      * @var object|array 
+      * \Data Objects array
+      * @var array 
+      */
+     private $_datas;
+
+     /**
+      * Instance of \Data object
+      * @var object
       */
      private $_data;
 
@@ -93,6 +114,7 @@
      public static function factory($filename, $id = NULL)
      {
          $db = new Database();
+         $db->_data = new Data();
          $db->set_filename($filename, $id);
          $db->xml = simplexml_load_file($db->file);
          return $db;
@@ -123,7 +145,14 @@
      public static function remove($filename)
      {
          $db = new Database();
-         unlink($db->file_path.$filename.'.xml');
+         if (file_exists($db->file_path.$filename.'.xml'))
+         {
+             unlink($db->file_path.$filename.'.xml');
+         }
+         else
+         {
+             throw new Exception('Database don\'t exists');
+         }
      }
 
      /**
@@ -134,8 +163,8 @@
       */
      public function __set($name, $value)
      {
-         $this->_data = Data::getInstance();
          $this->_data->{$name} = $value;
+         
          return $this;
      }
 
@@ -196,7 +225,6 @@
      {
          $xml = $this->xml;
          $data = Data::getInstance();
-
          if (!isset($this->_row_id))
          {
              $this->check_records($xml->row);
@@ -211,7 +239,7 @@
                      $obj->{$field->attributes()->name} = (string) $field;
                  }
 
-                 $this->_data[] = $obj;
+                 $this->_datas[] = $obj;
                  $id++;
              }
          }
@@ -226,7 +254,7 @@
 
              foreach ($fields as $field)
              {
-                 $obj->{$field->attributes()->name} = $field;
+                 $obj->{$field->attributes()->name} = (string) $field;
              }
              $obj->id = $row_id;
 
@@ -271,7 +299,7 @@
              call_user_func(array($this, '_where'));
          }
 
-         return $this->_data;
+         return $this->_datas;
      }
 
      /**
@@ -280,7 +308,7 @@
       */
      public function count()
      {
-         return count($this->_data);
+         return count($this->_datas);
      }
 
      /**
@@ -292,9 +320,9 @@
          $this->_key = $key;
          $this->_order = $order;
 
-         if (is_array($this->_data))
+         if (is_array($this->_datas))
          {
-             usort($this->_data, array($this, "cmp"));
+             usort($this->_datas, array($this, "cmp"));
          }
 
          return $this;
@@ -308,10 +336,10 @@
       */
      public function limit($number, $offset = 0)
      {
-         $this->_data = array_slice($this->_data, $offset, $number);
+         $this->_data = array_slice($this->_datas, $offset, $number);
          return $this;
      }
-     
+
      /**
       * Getting all conditions to array
       * @param mixed $column
@@ -375,7 +403,7 @@
       */
      private function _where()
      {
-         $this->_data = array_filter($this->_data, array($this, '_where_filter'));
+         $this->_datas = array_filter($this->_datas, array($this, '_where_filter'));
 
          return $this;
      }
@@ -441,12 +469,14 @@
       */
      private function _edit()
      {
-         $data = Data::getInstance();
+         $data = $this->_data;
 
          $row = $this->xml->row[$this->_row_id];
          $i = 0;
          foreach (get_object_vars($data) as $name => $value)
          {
+             $value = (is_array($value)) ? serialize($value) : $value;
+             
              if ($name != 'id')
                  $row->field[$i] = $value;
              $i++;
@@ -458,14 +488,16 @@
       */
      private function _add()
      {
-         $data = Data::getInstance();
-
+         
+         $data = $this->_data;
          $row = $this->xml->addChild('row');
          foreach (get_object_vars($data) as $name => $value)
          {
+             $value = (is_array($value)) ? serialize($value) : $value;
              $field = $row->addChild('field', $value);
              $field->addAttribute('name', $name);
          }
+
      }
 
      /**
@@ -482,7 +514,7 @@
          }
          else
          {
-             foreach (array_reverse($this->_data) as $obj)
+             foreach (array_reverse($this->_datas) as $obj)
              {
                  unset($this->xml->row[$obj->id]);
              }
