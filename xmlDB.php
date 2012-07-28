@@ -1,6 +1,7 @@
 <?php
 
  defined('DB_PATH') or die('Define your DB_PATH constance');
+
  /**
   * PHP Class to use XML file like a FlatFileDatabase
   *
@@ -20,6 +21,7 @@
 
          return self::$_instance;
      }
+
  }
 
  class Database {
@@ -91,6 +93,12 @@
      private $_where = array();
 
      /**
+      * Where type
+      * @var string
+      */
+     private $_where_type = 'and';
+
+     /**
       * Factory pattern to load needed Classes
       * @param string $filename name of file without extension
       * @param int $id optional ID of row we want to select
@@ -149,7 +157,7 @@
      public function __set($name, $value)
      {
          $this->_data->{$name} = $value;
-         
+
          return $this;
      }
 
@@ -321,7 +329,7 @@
       */
      public function limit($number, $offset = 0)
      {
-         $this->_data = array_slice($this->_datas, $offset, $number);
+         $this->_datas = array_slice($this->_datas, $offset, $number);
          return $this;
      }
 
@@ -332,14 +340,43 @@
       * @param mixed $value
       * @return $this
       */
-     public function where($column, $operator, $value)
+     public function where($column, $operator, $value, $type = 0)
      {
          $condition = func_get_args();
          is_array(reset($condition)) and $condition = reset($condition);
 
+         if ($type)
+         {
+             $this->_where_type = 'or';
+         }
+         
          $this->_where[] = $condition;
 
          return $this;
+     }
+
+     /**
+      * Alias for where()
+      * @param mixed $column
+      * @param string $operator
+      * @param mixed $value
+      * @return $this
+      */
+     public function and_where($column, $operator, $value)
+     {
+         return $this->where($column, $operator, $value);
+     }
+
+     /**
+      * Alias for where()
+      * @param mixed $column
+      * @param string $operator
+      * @param mixed $value
+      * @return $this
+      */
+     public function or_where($column, $operator, $value)
+     {
+         return $this->where($column, $operator, $value, 1);
      }
 
      /**
@@ -370,12 +407,18 @@
              if ($exec)
              {
                  $result = true;
-                 continue;
+                 if ($this->_where_type == 'or')
+                     break;
+                 else
+                     continue;
              }
              else
              {
                  $result = false;
-                 break;
+                 if ($this->_where_type == 'or')
+                     continue;
+                 else
+                     break;
              }
          }
 
@@ -461,7 +504,7 @@
          foreach (get_object_vars($data) as $name => $value)
          {
              $value = (is_array($value)) ? serialize($value) : $value;
-             
+
              if ($name != 'id')
                  $row->field[$i] = $value;
              $i++;
@@ -473,7 +516,7 @@
       */
      private function _add()
      {
-         
+
          $data = $this->_data;
          $row = $this->xml->addChild('row');
          foreach (get_object_vars($data) as $name => $value)
@@ -482,7 +525,6 @@
              $field = $row->addChild('field', $value);
              $field->addAttribute('name', $name);
          }
-
      }
 
      /**
