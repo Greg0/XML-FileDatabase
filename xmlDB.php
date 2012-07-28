@@ -1,21 +1,6 @@
 <?php
 
- namespace app\libraries;
-
- use lithium\core\NetworkException;
- use Exception;
-
- define('DB_PATH', dirname(__DIR__).'/database/data/');
-
  defined('DB_PATH') or die('Define your DB_PATH constance');
- /**
-  * The `Mock` data source is used behind-the-scenes when a model does not use a backend data source.
-  * It implements the necessary methods, but does not support querying and has no storage backend.
-  * It can create generic entities for use in forms and elsewhere within the framework. This allows
-  * developers to create domain objects with business logic and schemas, without worrying about
-  * backend storage.
-  */
-
  /**
   * PHP Class to use XML file like a FlatFileDatabase
   *
