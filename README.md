@@ -129,7 +129,6 @@ Don't forget about to call `select()` method
 ### Remove
 
 #### Single record deleting
-<<<<<<< HEAD
 
     $row = Database::factory('news',1); //Will remove row with ID 1
     $row->delete();
@@ -143,7 +142,6 @@ Don't forget about to call `select()` method
 
 #### Multiple records deleting
 
->>>>>>> 19f679e75219963f9dc6a50f33f49950c6c9f294
     Database::factory('news')->select()->where('author', '=', 'admin')->delete();
 
 Description
@@ -154,7 +152,3 @@ That's all for now, I think it is possible to write something else in future ;)
 My homepage: <http://greg0.ovh.org>
 
 If you like and using/want to use my repo send few words to my e-mail ;)
-<<<<<<< HEAD
-=======
-
->>>>>>> 19f679e75219963f9dc6a50f33f49950c6c9f294
