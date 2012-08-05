@@ -1,15 +1,11 @@
 <?php
+ defined('DB_PATH') or die('Define your DB_PATH constance');
 
  /**
   * PHP Class to use XML file like a FlatFileDatabase
   *
-<<<<<<< HEAD
-  * @author Grego
-  * @copyright 2011 http://greg0.ovh.org
-=======
   * @author Grego http://greg0.ovh.org
   * @copyright 2012 Grzegorz K.
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
   */
  class Data {
 
@@ -24,6 +20,7 @@
 
          return self::$_instance;
      }
+     
 
  }
 
@@ -61,15 +58,45 @@
 
      /**
       * Contain id of selected ROW if is set.
-      * @var type 
+      * @var int
       */
      private $_row_id = null;
 
      /**
-      * Instance of Data object or Objects array
-      * @var object|array 
+      * \Data Objects array
+      * @var array 
+      */
+     private $_datas;
+
+     /**
+      * Instance of \Data object
+      * @var object
       */
      private $_data;
+
+     /**
+      * Contain key to order_by() method
+      * @var int|string
+      */
+     private $_key;
+
+     /**
+      * Contain order way to order_by() method
+      * @var int|string
+      */
+     private $_order;
+
+     /**
+      * 
+      * @var array
+      */
+     private $_where = array();
+
+     /**
+      * Where type
+      * @var string
+      */
+     private $_where_type = 'and';
 
      /**
       * Factory pattern to load needed Classes
@@ -80,9 +107,45 @@
      public static function factory($filename, $id = NULL)
      {
          $db = new Database();
+         $db->_data = new Data();
          $db->set_filename($filename, $id);
          $db->xml = simplexml_load_file($db->file);
          return $db;
+     }
+
+     /**
+      * Creating new database
+      * @param string $filename name of file without extension
+      */
+     public static function create($filename)
+     {
+         $content = '<?xml version="1.0" encoding="UTF-8"?>
+<table name="'.$filename.'">
+</table>';
+         $db = new Database();
+         if (!file_exists($db->file_path.$filename.'.xml'))
+         {
+             file_put_contents($db->file_path.$filename.'.xml', $content);
+         }
+         else
+             throw new Exception('Database already exists');
+     }
+
+     /**
+      * Remove database
+      * @param string $filename name of file without extension
+      */
+     public static function remove($filename)
+     {
+         $db = new Database();
+         if (file_exists($db->file_path.$filename.'.xml'))
+         {
+             unlink($db->file_path.$filename.'.xml');
+         }
+         else
+         {
+             throw new Exception('Database don\'t exists');
+         }
      }
 
      /**
@@ -93,15 +156,11 @@
       */
      public function __set($name, $value)
      {
-         $this->_data = Data::getInstance();
          $this->_data->{$name} = $value;
+
          return $this;
      }
-<<<<<<< HEAD
-     
-=======
 
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
      /**
       * Getter of file name
       * @return string 
@@ -133,9 +192,22 @@
              $this->file = $this->file_path.$filename.'.xml';
              $this->_file_name = $filename;
              $this->_file_content = file_get_contents($this->file);
-             $this->_row_id = $id;
+             $this->_row_id = ($id !== null) ? (int) $id : null;
          }
          return $this;
+     }
+
+     /**
+      * Check for records
+      * @param mixed $record
+      * @throws Exception No record found
+      */
+     private function check_records($record)
+     {
+         if (!$record)
+         {
+             throw new Exception('No data found');
+         }
      }
 
      /**
@@ -146,30 +218,39 @@
      {
          $xml = $this->xml;
          $data = Data::getInstance();
-
-         if (!is_numeric($this->_row_id))
+         if (!isset($this->_row_id))
          {
+             $this->check_records($xml->row);
+
+             $id = 0;
              foreach ($xml->row as $row)
              {
                  $obj = clone $data;
-
+                 $obj->id = $id;
                  foreach ($row->field as $field)
                  {
-                     $obj->{$field->attributes()->name} = $field;
+                     $obj->{$field->attributes()->name} = (string) $field;
                  }
-                 $this->_data[] = $obj;
+
+                 $this->_datas[] = $obj;
+                 $id++;
              }
          }
          else
          {
-             $row = (int) $this->_row_id;
-             $fields = $xml->row[$row];
+             $row_id = (int) $this->_row_id;
+             $fields = $xml->row[$row_id];
+
+             $this->check_records($fields);
+
              $obj = $data;
 
              foreach ($fields as $field)
              {
-                 $obj->{$field->attributes()->name} = $field;
+                 $obj->{$field->attributes()->name} = (string) $field;
              }
+             $obj->id = $row_id;
+
              $this->_data = $obj;
          }
 
@@ -177,32 +258,185 @@
      }
 
      /**
-<<<<<<< HEAD
-=======
+      * comparison function to usort in order_by() method
+      * @param obj $obja
+      * @param obj $objb
+      * @return int 
+      */
+     private function cmp($obja, $objb)
+     {
+         $a = $obja->{$this->_key};
+         $b = $objb->{$this->_key};
+         if ($a == $b)
+         {
+             return 0;
+         }
+         if ($this->_order == 'ASC')
+         {
+             return ($a < $b) ? -1 : 1;
+         }
+         elseif ($this->_order == 'DESC')
+         {
+             return ($a > $b) ? -1 : 1;
+         }
+     }
+
+     /**
       * Returning data for multi select
       * @return \Data
       */
      public function find_all()
      {
-         return $this->_data;
+         if (is_array($this->_where) AND !empty($this->_where))
+         {
+             call_user_func(array($this, '_where'));
+         }
+
+         return $this->_datas;
+     }
+
+     /**
+      * Returning count of rows
+      * @return int
+      */
+     public function count()
+     {
+         return count($this->_datas);
      }
 
      /**
       * Sort array of objects DESC by ID
       * @return \Database 
       */
-     public function order_by_desc()
+     public function order_by($key, $order = 'ASC')
      {
-         if (is_array($this->_data))
+         $this->_key = $key;
+         $this->_order = $order;
+
+         if (is_array($this->_datas))
          {
-             $this->_data = array_reverse($this->_data, true);
+             usort($this->_datas, array($this, "cmp"));
          }
 
          return $this;
      }
 
      /**
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
+      * Set limit to array of Data objects
+      * @param int $number number of rows
+      * @param int $offset offset 
+      * @return \Database 
+      */
+     public function limit($number, $offset = 0)
+     {
+         $this->_datas = array_slice($this->_datas, $offset, $number);
+         return $this;
+     }
+
+     /**
+      * Getting all conditions to array
+      * @param mixed $column
+      * @param string $operator
+      * @param mixed $value
+      * @return $this
+      */
+     public function where($column, $operator, $value, $type = 0)
+     {
+         $condition = func_get_args();
+         is_array(reset($condition)) and $condition = reset($condition);
+
+         if ($type)
+         {
+             $this->_where_type = 'or';
+         }
+         
+         $this->_where[] = $condition;
+
+         return $this;
+     }
+
+     /**
+      * Alias for where()
+      * @param mixed $column
+      * @param string $operator
+      * @param mixed $value
+      * @return $this
+      */
+     public function and_where($column, $operator, $value)
+     {
+         return $this->where($column, $operator, $value);
+     }
+
+     /**
+      * Alias for where()
+      * @param mixed $column
+      * @param string $operator
+      * @param mixed $value
+      * @return $this
+      */
+     public function or_where($column, $operator, $value)
+     {
+         return $this->where($column, $operator, $value, 1);
+     }
+
+     /**
+      * Callback function for array_filter() in _where() method
+      * @param type $row
+      * @return boolean 
+      */
+     private function _where_filter($row)
+     {
+         $operator = array(
+             '=' => '==',
+             '!=' => '!=',
+             '>' => '>',
+             '<' => '<',
+             '>=' => '>=',
+             '<=' => '<='
+         );
+
+         $result = true;
+
+         foreach ($this->_where as $where)
+         {
+             $column = $where[0];
+             $op = $where[1];
+             $value = $where[2];
+
+             eval('$exec = strtolower($row->{$column}) '.$operator[$op].' strtolower($value);');
+             if ($exec)
+             {
+                 $result = true;
+                 if ($this->_where_type == 'or')
+                     break;
+                 else
+                     continue;
+             }
+             else
+             {
+                 $result = false;
+                 if ($this->_where_type == 'or')
+                     continue;
+                 else
+                     break;
+             }
+         }
+
+         return $result;
+     }
+
+     /**
+      * Filtering array of results
+      * @return \Database 
+      */
+     private function _where()
+     {
+         $this->_datas = array_filter($this->_datas, array($this, '_where_filter'));
+
+         return $this;
+     }
+
+     /**
       * Run selecting data. Returning specified data if $fields are specified
       * @param array $fields fields you want to retrive
       * @return \Database|\Data depending on multi/single select
@@ -231,91 +465,72 @@
              }
          }
 
-<<<<<<< HEAD
-         $this->_xml_to_object();
-=======
          try {
              $this->_xml_to_object();
          }
          catch (Exception $msg) {
-             throw new Exception('Brak rekordu');
+             throw $msg;
          }
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
 
-         return (is_numeric($this->_row_id)) ? Data::getInstance() : $this;
+         return (isset($this->_row_id)) ? Data::getInstance() : $this;
      }
 
      /**
-<<<<<<< HEAD
-      * Returning data for multi select
-      * @return \Data
-      */
-     public function find_all()
-     {
-         return $this->_data;
-     }
-
-     /**
-      * Sort array of objects DESC by ID
-      * @return \Database 
-      */
-     public function order_by_desc()
-     {
-         if (is_array($this->_data))
-         {
-             $this->_data = array_reverse($this->_data, true);
-         }
-
-         return $this;
-     }
-
-     public function save()
-     {
-         $data = Data::getInstance();
-         $row = $this->xml->addChild('row');
-
-         foreach(get_object_vars($data) as $name => $value)
-         {
-             $field = $row->addChild('field', $value);
-             $field->addAttribute('name', $name);
-         }
-         
-         return $this->xml->asXML($this->file);
-=======
       * Add/Edit rows
       * @return asXML 
       */
      public function save()
      {
-         $data = Data::getInstance();
-
-         if (is_numeric($this->_row_id))
+         if (isset($this->_row_id))
          {
-             $row = $this->xml->row[$this->_row_id];
-             $i = 0;
-             foreach (get_object_vars($data) as $name => $value)
-             {
-                 $row->field[$i] = $value;
-                 $i++;
-             }
+             $this->_edit();
          }
          else
          {
-             $row = $this->xml->addChild('row');
-             foreach (get_object_vars($data) as $name => $value)
-             {
-                 $field = $row->addChild('field', $value);
-                 $field->addAttribute('name', $name);
-             }
+             $this->_add();
          }
-
          return $this->xml->asXML($this->file);
+     }
+
+     /**
+      * Edit row
+      */
+     private function _edit()
+     {
+         $data = $this->_data;
+
+         $row = $this->xml->row[$this->_row_id];
+         $i = 0;
+         foreach (get_object_vars($data) as $name => $value)
+         {
+             $value = (is_array($value)) ? serialize($value) : $value;
+
+             if ($name != 'id')
+                 $row->field[$i] = $value;
+             $i++;
+         }
+     }
+
+     /**
+      * Add row
+      */
+     private function _add()
+     {
+
+         $data = $this->_data;
+         $row = $this->xml->addChild('row');
+         foreach (get_object_vars($data) as $name => $value)
+         {
+             $value = (is_array($value)) ? serialize($value) : $value;
+             $field = $row->addChild('field', $value);
+             $field->addAttribute('name', $name);
+         }
      }
 
      /**
       * Delete row
       * @return string
-      * @throws Exception nie wybrano rekordu
+      * @throws Exception row ID not specified
       */
      public function delete()
      {
@@ -324,9 +539,16 @@
              unset($this->xml->row[$this->_row_id]);
              return $this->xml->asXML($this->file);
          }
+         else
+         {
+             foreach (array_reverse($this->_datas) as $obj)
+             {
+                 unset($this->xml->row[$obj->id]);
+             }
+             return $this->xml->asXML($this->file);
+         }
 
-         throw new Exception('Nie wybrano rekordu do kasacji');
->>>>>>> cce73d677a891b3559e97981c76f44ef49564e43
+         throw new Exception('Error with deleting');
      }
 
  }
