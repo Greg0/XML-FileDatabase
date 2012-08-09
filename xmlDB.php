@@ -1,4 +1,5 @@
 <?php
+
  defined('DB_PATH') or die('Define your DB_PATH constance');
 
  /**
@@ -20,7 +21,6 @@
 
          return self::$_instance;
      }
-     
 
  }
 
@@ -99,6 +99,12 @@
      private $_where_type = 'and';
 
      /**
+      * Last ID
+      * @var string
+      */
+     private $_last_id = 0;
+
+     /**
       * Factory pattern to load needed Classes
       * @param string $filename name of file without extension
       * @param int $id optional ID of row we want to select
@@ -108,7 +114,7 @@
      {
          $db = new Database();
          $db->_data = new Data();
-         $db->set_filename($filename, $id);
+         $db->set_informations($filename, $id);
          $db->xml = simplexml_load_file($db->file);
          return $db;
      }
@@ -120,7 +126,7 @@
      public static function create($filename)
      {
          $content = '<?xml version="1.0" encoding="UTF-8"?>
-<table name="'.$filename.'">
+<table name="'.$filename.'" lastID="0">
 </table>';
          $db = new Database();
          if (!file_exists($db->file_path.$filename.'.xml'))
@@ -185,14 +191,14 @@
       * @param int $id
       * @return \Database This object
       */
-     private function set_filename($filename = NULL, $id = NULL)
+     private function set_informations($filename = NULL, $id = NULL)
      {
          if ($filename !== NULL)
          {
              $this->file = $this->file_path.$filename.'.xml';
              $this->_file_name = $filename;
              $this->_file_content = file_get_contents($this->file);
-             $this->_row_id = ($id !== null) ? (int) $id : null;
+             $this->_row_id = ($id !== null) ? (int) $id-1 : null;
          }
          return $this;
      }
@@ -210,6 +216,15 @@
          }
      }
 
+    /**
+    * get last ID
+    * @return int $_last_id 
+    */
+     public function get_last_id()
+     {
+         return $this->xml['lastID'];
+     }
+
      /**
       * Insert XMl into Data object and put instance into this->_data
       * @return \Database
@@ -222,25 +237,22 @@
          {
              $this->check_records($xml->row);
 
-             $id = 0;
              foreach ($xml->row as $row)
              {
+                 $id = $row->attributes()->id;
                  $obj = clone $data;
-                 $obj->id = $id;
+                 $obj->id = (int) $id;
                  foreach ($row->field as $field)
                  {
                      $obj->{$field->attributes()->name} = (string) $field;
                  }
-
                  $this->_datas[] = $obj;
-                 $id++;
              }
          }
          else
          {
              $row_id = (int) $this->_row_id;
              $fields = $xml->row[$row_id];
-
              $this->check_records($fields);
 
              $obj = $data;
@@ -292,7 +304,7 @@
              call_user_func(array($this, '_where'));
          }
 
-         return $this->_datas;
+         return array_values($this->_datas);
      }
 
      /**
@@ -349,7 +361,7 @@
          {
              $this->_where_type = 'or';
          }
-         
+
          $this->_where[] = $condition;
 
          return $this;
@@ -518,7 +530,10 @@
      {
 
          $data = $this->_data;
+         $this->xml['lastID']+=1;
+         
          $row = $this->xml->addChild('row');
+         $row->addAttribute('id', $this->get_last_id());
          foreach (get_object_vars($data) as $name => $value)
          {
              $value = (is_array($value)) ? serialize($value) : $value;
