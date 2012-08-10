@@ -205,7 +205,7 @@
              $this->file = $this->file_path.$filename.'.xml';
              $this->_file_name = $filename;
              $this->_file_content = file_get_contents($this->file);
-             $this->_row_id = ($id !== null) ? (int) $id - 1 : null;
+             $this->_row_id = ($id !== null) ? (int) $id : null;
          }
          return $this;
      }
@@ -258,7 +258,7 @@
          }
          else
          {
-             $row_id = (int) $this->_row_id + 1;
+             $row_id = (int) $this->_row_id;
              $fields = $xml->xpath('/table/row[@id="'.$row_id.'"]/field');
              $this->check_records($fields);
 
@@ -519,14 +519,14 @@
      {
          $data = $this->_data;
 
-         $row = $this->xml->row[$this->_row_id];
+         $row = $this->xml->xpath('/table/row[@id="'.$this->_row_id.'"]');
          $i = 0;
          foreach (get_object_vars($data) as $name => $value)
          {
              $value = (is_array($value)) ? serialize($value) : $value;
 
              if ($name != 'id')
-                 $row->field[$i] = $value;
+                 $row[0]->field[$i] = $value;
              $i++;
          }
      }
@@ -559,7 +559,8 @@
      {
          if (isset($this->_row_id))
          {
-             unset($this->xml->row[$this->_row_id]);
+             $row = $this->xml->xpath('/table/row[@id="'.$this->_row_id.'"]');
+             unset($row[0][0]);
              return $this->xml->asXML($this->file);
          }
          else
