@@ -22,6 +22,12 @@
          return self::$_instance;
      }
 
+     public static function newInstance()
+     {
+         self::$_instance = new self();
+         return self::$_instance;
+     }
+
  }
 
  class Database {
@@ -112,6 +118,7 @@
       */
      public static function factory($filename, $id = NULL)
      {
+         Data::newInstance();
          $db = new Database();
          $db->_data = new Data();
          $db->set_informations($filename, $id);
@@ -198,7 +205,7 @@
              $this->file = $this->file_path.$filename.'.xml';
              $this->_file_name = $filename;
              $this->_file_content = file_get_contents($this->file);
-             $this->_row_id = ($id !== null) ? (int) $id-1 : null;
+             $this->_row_id = ($id !== null) ? (int) $id - 1 : null;
          }
          return $this;
      }
@@ -216,10 +223,10 @@
          }
      }
 
-    /**
-    * get last ID
-    * @return int $_last_id 
-    */
+     /**
+      * get last ID
+      * @return int $_last_id 
+      */
      public function get_last_id()
      {
          return $this->xml['lastID'];
@@ -251,8 +258,8 @@
          }
          else
          {
-             $row_id = (int) $this->_row_id;
-             $fields = $xml->row[$row_id];
+             $row_id = (int) $this->_row_id + 1;
+             $fields = $xml->xpath('/table/row[@id="'.$row_id.'"]/field');
              $this->check_records($fields);
 
              $obj = $data;
@@ -313,6 +320,7 @@
       */
      public function count()
      {
+         $this->_where();
          return count($this->_datas);
      }
 
@@ -531,7 +539,7 @@
 
          $data = $this->_data;
          $this->xml['lastID']+=1;
-         
+
          $row = $this->xml->addChild('row');
          $row->addAttribute('id', $this->get_last_id());
          foreach (get_object_vars($data) as $name => $value)
@@ -556,11 +564,14 @@
          }
          else
          {
+             $this->_where();
              foreach (array_reverse($this->_datas) as $obj)
              {
-                 unset($this->xml->row[$obj->id]);
+                 $xml = $this->xml;
+                 $row = $xml->xpath('/table/row[@id="'.$obj->id.'"]');
+                 unset($row[0][0]);
              }
-             return $this->xml->asXML($this->file);
+             return $xml->asXML($this->file);
          }
 
          throw new Exception('Error with deleting');
