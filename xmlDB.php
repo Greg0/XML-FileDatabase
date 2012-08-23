@@ -260,6 +260,7 @@
          {
              $row_id = (int) $this->_row_id;
              $fields = $xml->xpath('/table/row[@id="'.$row_id.'"]/field');
+             
              $this->check_records($fields);
 
              $obj = $data;
