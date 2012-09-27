@@ -224,6 +224,74 @@
      }
 
      /**
+      * Check type of var
+      * @param mixed $record
+      * @throws Exception No record found
+      */
+     private function check_type($value)
+     {
+         if (is_array($value))
+         {
+             $type = 'array';
+         }
+         elseif (is_int($value))
+         {
+             $type = 'integer';
+         }
+         elseif (is_bool($value))
+         {
+             $type = 'boolean';
+         }
+         elseif (is_string($value))
+         {
+             $type = 'string';
+         }
+         elseif (is_float($value))
+         {
+             $type = 'float';
+         }
+         elseif (is_double($value))
+         {
+             $type = 'double';
+         }
+         return $type;
+     }
+
+     /**
+      * Return type of var
+      * @param mixed $record
+      * @throws Exception No record found
+      */
+     private function return_value($field)
+     {
+         $type = $field->attributes()->type;
+         if ($type == 'array')
+         {
+             return unserialize($field);
+         }
+         elseif ($type == 'integer')
+         {
+             return (integer) $field;
+         }
+         elseif ($type == 'boolean')
+         {
+             return (boolean) $field;
+         }
+         elseif ($type == 'string')
+         {
+             return (string) $field;
+         }
+         elseif ($type == 'float')
+         {
+             return (float) $field;
+         }
+         elseif ($type == 'double')
+         {
+             return (double) $field;
+         }
+     }
+
+     /**
       * get last ID
       * @return int $_last_id 
       */
@@ -251,7 +319,7 @@
                  $obj->id = (int) $id;
                  foreach ($row->field as $field)
                  {
-                     $obj->{$field->attributes()->name} = (string) $field;
+                     $obj->{$field->attributes()->name} = $this->return_value($field);
                  }
                  $this->_datas[] = $obj;
              }
@@ -260,14 +328,14 @@
          {
              $row_id = (int) $this->_row_id;
              $fields = $xml->xpath('/table/row[@id="'.$row_id.'"]/field');
-             
+
              $this->check_records($fields);
 
              $obj = $data;
 
              foreach ($fields as $field)
              {
-                 $obj->{$field->attributes()->name} = (string) $field;
+                 $obj->{$field->attributes()->name} = $this->return_value($field);
              }
              $obj->id = $row_id;
 
@@ -524,7 +592,10 @@
          $i = 0;
          foreach (get_object_vars($data) as $name => $value)
          {
-             $value = (is_array($value)) ? serialize($value) : $value;
+             $type = $this->check_type($value);
+             $value = ($type=='array') ? serialize($value) : $value;
+
+             $row[0]->field['type'] = $type;
 
              if ($name != 'id')
                  $row[0]->field[$i] = $value;
@@ -545,9 +616,12 @@
          $row->addAttribute('id', $this->get_last_id());
          foreach (get_object_vars($data) as $name => $value)
          {
-             $value = (is_array($value)) ? serialize($value) : $value;
+             $type = $this->check_type($value);
+             $value = ($type=='array') ? serialize($value) : $value;
+
              $field = $row->addChild('field', $value);
              $field->addAttribute('name', $name);
+             $field->addAttribute('type', $type);
          }
      }
 
@@ -577,6 +651,21 @@
          }
 
          throw new Exception('Error with deleting');
+     }
+
+     public function update()
+     {
+         $xml = $this->xml;
+         $rows_no = $xml->count();
+         $xml->addAttribute('lastID', $rows_no);
+
+         $id = 1;
+         foreach ($xml->row as $row)
+         {
+             $row->addAttribute('id', $id);
+             $id++;
+         }
+         return $xml->asXML($this->file);
      }
 
  }
