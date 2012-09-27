@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table name="news">
-<row><field name="title">Some kind of news</field><field name="author">admin</field><field name="content">Lorem ipsum dolor sit amet</field></row><row><field name="title">Next information HOT</field><field name="author">poster1</field><field name="content">Lorem ipsum sit dolor amet</field></row></table>
+    <row>
+        <field name="title" type="string">Some kind of news</field>
+        <field name="author" type="string">admin</field>
+        <field name="content" type="string">Lorem ipsum dolor sit amet</field>
+        <field name="categories" type="array">a:2:{i:2;i:2;i:1;i:1;}</field>
+    </row>
+    <row>
+        <field name="title" type="string">Next information HOT</field>
+        <field name="author" type="string">poster1</field>
+        <field name="content" type="string">Lorem ipsum sit dolor amet</field>
+        <field name="categories" type="array">a:2:{i:2;i:2;i:1;i:1;}</field>
+    </row>
+</table>
