@@ -20,16 +20,16 @@ news.xml:
     <?xml version="1.0" encoding="UTF-8"?>
     <table name="news" lastID="4">
         <row id="1">
-            <field name="title">My first news</field>
-            <field name="author">Grego</field>
-            <field name="content">
+            <field name="title" type="string">My first news</field>
+            <field name="author" type="string">Grego</field>
+            <field name="content" type="string">
               Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies. 
             </field>
         </row>
         <row id="4">
-            <field name="title">Some other news</field>
-            <field name="author">Admin</field>
-            <field name="content">
+            <field name="title" type="string">Some other news</field>
+            <field name="author" type="string">Admin</field>
+            <field name="content" type="string">
               Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim.
             </field>
         </row>
