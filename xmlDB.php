@@ -485,29 +485,67 @@
          );
 
          $result = true;
-
          foreach ($this->_where as $where)
          {
              $column = $where[0];
              $op = $where[1];
              $value = $where[2];
 
-             eval('$exec = strtolower($row->{$column}) '.$operator[$op].' strtolower($value);');
-             if ($exec)
+             if (is_array($value))
              {
-                 $result = true;
-                 if ($this->_where_type == 'or')
-                     break;
+                 if (is_array($row->{$column}))
+                 {
+                     $return_arr = array_intersect($row->{$column}, $value);
+                     if(!empty($return_arr))
+                     {
+                         $if = true;
+                     }
+                     else
+                     {
+                         $if = false;
+                     }
+                 }
                  else
-                     continue;
+                 {
+                     $if = in_array($row->{$column}, $value);
+                 }
+                 if ($if)
+                 {
+                     $result = true;
+                     if ($this->_where_type == 'or')
+                         break;
+                     else
+                         continue;
+                 }
+                 else
+                 {
+                     $result = false;
+                     if ($this->_where_type == 'or')
+                         continue;
+                     else
+                         break;
+                 }
              }
              else
              {
-                 $result = false;
-                 if ($this->_where_type == 'or')
-                     continue;
+
+                 eval('$exec = strtolower($row->{$column}) '.$operator[$op].' strtolower($value);');
+                 if ($exec)
+                 {
+                     $result = true;
+                     if ($this->_where_type == 'or')
+                         break;
+                     else
+                         continue;
+                 }
                  else
-                     break;
+                 {
+                     $result = false;
+                     if ($this->_where_type == 'or')
+                         continue;
+                     else
+                         break;
+                 }
              }
          }
 
@@ -593,7 +631,7 @@
          foreach (get_object_vars($data) as $name => $value)
          {
              $type = $this->check_type($value);
-             $value = ($type=='array') ? serialize($value) : $value;
+             $value = ($type == 'array') ? serialize($value) : $value;
 
              $row[0]->field['type'] = $type;
 
@@ -617,7 +655,7 @@
          foreach (get_object_vars($data) as $name => $value)
          {
              $type = $this->check_type($value);
-             $value = ($type=='array') ? serialize($value) : $value;
+             $value = ($type == 'array') ? serialize($value) : $value;
 
              $field = $row->addChild('field', $value);
              $field->addAttribute('name', $name);
